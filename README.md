@@ -1,1 +1,1 @@
-#This repository will contain the python programs
+#This repository contains python programs
