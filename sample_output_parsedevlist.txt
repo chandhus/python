@@ -1,0 +1,21 @@
+ubuntu@ubuntu-VirtualBox:~/python/python$ python3 Parse_device_list.py 
+Invalid number of arguments, please rerun program with the correct option
+ Usage: python3 Parse_device_list.py <device_index> <device_location>
+ 
+ubuntu@ubuntu-VirtualBox:~/python/python$ 
+ubuntu@ubuntu-VirtualBox:~/python/python$ 
+ubuntu@ubuntu-VirtualBox:~/python/python$ 
+ubuntu@ubuntu-VirtualBox:~/python/python$ python3 Parse_device_list.py ssw altn
+There are 3 matching devices in the list
+ssw001.altn
+ssw003.altn
+ssw002.altn
+ubuntu@ubuntu-VirtualBox:~/python/python$ python3 Parse_device_list.py ssw altntest2
+There are 0 matching devices in the list
+
+ubuntu@ubuntu-VirtualBox:~/python/python$ python3 Parse_device_list.py ssw altn altn
+Invalid number of arguments, please rerun program with the correct option
+ Usage: python3 Parse_device_list.py <device_index> <device_location>
+ 
+ubuntu@ubuntu-VirtualBox:~/python/python$ 
+
