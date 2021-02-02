@@ -11,7 +11,7 @@ import datetime
 
 
 start_time = datetime.datetime.now()
-my_ip = "143.168.0.103"
+my_ip = "143.168.0.102"
 network_addr = "143.168.0."
 usable_range = 120
 start_index = 100
@@ -46,6 +46,7 @@ def check_valid_ip(my_ip, all_host_ips):
 
    
 def check_active_ip(offset):
+    start_thread_time = datetime.datetime.now()
     host_index = start_index + offset
     
     while host_index <= usable_range:
@@ -57,6 +58,9 @@ def check_active_ip(offset):
             active_ip_list.append(addr)
         host_index += num_of_threads             
     
+    end_thread_time = datetime.datetime.now()
+    exec_time = end_thread_time - start_thread_time
+    print("Thread %s execution time is: %s seconds"  % (offset, exec_time) )
 
 
 def trace_active_ips():    
@@ -89,4 +93,4 @@ def print_report(all_active_ips):
 
 concurrency_threads()
 all_active_ips = trace_active_ips()
-print_report(all_active_ips)
+print_report(all_active_ips) 
