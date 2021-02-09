@@ -10,10 +10,11 @@ import threading
 import datetime
 
 
+
 start_time = datetime.datetime.now()
 my_ip = "143.168.0.102"
 network_addr = "143.168.0."
-usable_range = 120
+usable_range = 110
 start_index = 100
 
 num_of_threads = 1
@@ -50,6 +51,7 @@ def check_active_ip(offset):
     host_index = start_index + offset
     
     while host_index <= usable_range:
+        
         addr = network_addr + str(host_index)
         args=['ping', '-n', '1', addr]
         ping_output = subprocess.Popen(args, shell=True, stdout=subprocess.PIPE)
@@ -77,20 +79,21 @@ def trace_active_ips():
             tid1.start()
             thread_list.append(tid1) 
             
-            for offset in thread_list:
-                offset.join()
+        for offset in thread_list:
+            offset.join()
     
     end_time = datetime.datetime.now()
     total_time = end_time - start_time
+    active_ip_list.sort()
     return(active_ip_list)
     
 
 def print_report(all_active_ips):
     print("There are %s active ip addresses in this subnet" % len(all_active_ips))
-    print(','.join(all_active_ips))
+    print('\n'.join(all_active_ips))
     print("Total execution time with %s threads is %s" % (num_of_threads, total_time))
 
 
 concurrency_threads()
-all_active_ips = trace_active_ips()
-print_report(all_active_ips) 
+active_ip_list = trace_active_ips()
+print_report(active_ip_list)
