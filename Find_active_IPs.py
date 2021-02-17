@@ -21,6 +21,8 @@ curr_addr = start_addr
 num_of_threads = 1
 active_ip_list = []
 total_time = ""
+thread_ip_list = []
+thread_exec_time = []
 
 
 def concurrency_threads():
@@ -54,13 +56,12 @@ def check_active_ip(offset,lock):
     
     
     while int(ipaddress.IPv4Address(curr_addr)) <= int(ipaddress.IPv4Address(end_addr)) :
-        #print("Thread-%s, Start-time-%s"%( offset , start_thread_time))
         lock.acquire()
         chk_ip = curr_addr
         curr_addr = ipaddress.ip_address(curr_addr) + 1
         lock.release()
         
-        #print("Thread-%s, IP-%s\n"%(offset, chk_ip))
+        thread_ip_list[offset].append(str(chk_ip))
         args=['ping', '-n', '1', str(chk_ip)] 
         ping_output = subprocess.Popen(args, shell=True, stdout=subprocess.PIPE)
         ping_output_out = str(ping_output.communicate()[0]) 
@@ -69,7 +70,8 @@ def check_active_ip(offset,lock):
         
     end_thread_time = datetime.datetime.now()
     exec_time = end_thread_time - start_thread_time
-    print("Thread %s execution time is: %s seconds\n"  % (offset, exec_time) )
+    thread_exec_time[offset].append(str(exec_time))
+    
 
 
 def trace_active_ips():    
@@ -84,7 +86,11 @@ def trace_active_ips():
     else:
         lock = threading.Lock()
         
-        for offset in range(0, num_of_threads):
+        for offset in range(num_of_threads):
+            thread_ip_list.append([])
+            thread_exec_time.append([])
+        
+        for offset in range(num_of_threads):
             tid1 = threading.Thread(target=check_active_ip, args=[offset,lock])
             tid1.start()
             thread_list.append(tid1) 
@@ -99,9 +105,19 @@ def trace_active_ips():
     
 
 def print_report(all_active_ips):
-    print("There are %s active ip addresses in this subnet" % len(all_active_ips))
+    
+    print("\nIP Addresses validated by each thread:")
+    i = 0
+    for x in thread_ip_list:
+        print("\nThread-%s  IP Addresses:"% i)
+        print(*x)
+        i += 1
+    print("\nExecution time for each thread in HH:MM:SS:MS format:")
+    for x in thread_exec_time:
+        print(*x)
+    print("\nThere are %s active ip addresses in this subnet" % len(all_active_ips))
     print('\n'.join(all_active_ips))
-    print("Total execution time with %s threads is %s" % (num_of_threads, total_time))
+    print("\nTotal execution time with %s threads in HH:MM:SS:MS format is %s" % (num_of_threads, total_time))
 
 
 concurrency_threads()
