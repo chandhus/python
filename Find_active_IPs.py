@@ -106,15 +106,16 @@ def trace_active_ips():
 
 def print_report(all_active_ips):
     
-    print("\nIP Addresses validated by each thread:")
-    i = 0
+    print("\nIP Addresses tested by each thread:")
     for x in thread_ip_list:
-        print("\nThread-%s  IP Addresses:"% i)
+        print("\nThread-%s:"% thread_ip_list.index(x))
         print(*x)
-        i += 1
-    print("\nExecution time for each thread in HH:MM:SS:MS format:")
+       
+    print("\n\nExecution time for each thread in HH:MM:SS:MS format:")
     for x in thread_exec_time:
+        print("\nThread-%s:"% thread_exec_time.index(x))
         print(*x)
+    
     print("\nThere are %s active ip addresses in this subnet" % len(all_active_ips))
     print('\n'.join(all_active_ips))
     print("\nTotal execution time with %s threads in HH:MM:SS:MS format is %s" % (num_of_threads, total_time))
