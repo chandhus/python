@@ -8,14 +8,15 @@ import subprocess
 import sys
 import threading
 import datetime
-
+import ipaddress
 
 
 start_time = datetime.datetime.now()
 my_ip = "143.168.0.102"
 network_addr = "143.168.0."
-usable_range = 110
-start_index = 100
+start_addr = "143.168.0.1"
+end_addr = "143.168.0.255"
+curr_addr = start_addr
 
 num_of_threads = 1
 active_ip_list = []
@@ -46,27 +47,34 @@ def check_valid_ip(my_ip, all_host_ips):
     print("\n%s is a matched IP Address!" % my_ip)
 
    
-def check_active_ip(offset):
+def check_active_ip(offset,lock):
+    global curr_addr
+    global end_addr
     start_thread_time = datetime.datetime.now()
-    host_index = start_index + offset
     
-    while host_index <= usable_range:
+    
+    while int(ipaddress.IPv4Address(curr_addr)) <= int(ipaddress.IPv4Address(end_addr)) :
+        #print("Thread-%s, Start-time-%s"%( offset , start_thread_time))
+        lock.acquire()
+        chk_ip = curr_addr
+        curr_addr = ipaddress.ip_address(curr_addr) + 1
+        lock.release()
         
-        addr = network_addr + str(host_index)
-        args=['ping', '-n', '1', addr]
+        #print("Thread-%s, IP-%s\n"%(offset, chk_ip))
+        args=['ping', '-n', '1', str(chk_ip)] 
         ping_output = subprocess.Popen(args, shell=True, stdout=subprocess.PIPE)
         ping_output_out = str(ping_output.communicate()[0]) 
-        if "TTL" in str(ping_output_out):
-            active_ip_list.append(addr)
-        host_index += num_of_threads             
-    
+        if " TTL" in str(ping_output_out):
+            active_ip_list.append(str(chk_ip))
+        
     end_thread_time = datetime.datetime.now()
     exec_time = end_thread_time - start_thread_time
-    print("Thread %s execution time is: %s seconds"  % (offset, exec_time) )
+    print("Thread %s execution time is: %s seconds\n"  % (offset, exec_time) )
 
 
 def trace_active_ips():    
     global total_time
+    global curr_addr
     all_host_ips = capture_ips()
     check_valid_ip(my_ip, all_host_ips)
     
@@ -74,8 +82,10 @@ def trace_active_ips():
     if num_of_threads == 1:
         check_active_ip(0)
     else:
+        lock = threading.Lock()
+        
         for offset in range(0, num_of_threads):
-            tid1 = threading.Thread(target=check_active_ip, args=[offset])
+            tid1 = threading.Thread(target=check_active_ip, args=[offset,lock])
             tid1.start()
             thread_list.append(tid1) 
             
