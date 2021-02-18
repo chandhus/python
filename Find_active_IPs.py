@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 Created on Thu Dec 10 00:12:09 2020
-@author: Chandhu
+@author: Chandhus
 """
 
 import subprocess
