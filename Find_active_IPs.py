@@ -9,21 +9,9 @@ import sys
 import threading
 import datetime
 import ipaddress
-
+from var import *
 
 start_time = datetime.datetime.now()
-my_ip = "143.168.0.102"
-network_addr = "143.168.0."
-start_addr = "143.168.0.1"
-end_addr = "143.168.0.255"
-curr_addr = start_addr
-
-num_of_threads = 1
-active_ip_list = []
-total_time = ""
-thread_ip_list = []
-thread_exec_time = []
-
 
 def concurrency_threads():
     global num_of_threads
