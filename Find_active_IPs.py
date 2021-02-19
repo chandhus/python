@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 Created on Thu Dec 10 00:12:09 2020
-@author: Chandhus
+@author: Chandhu
 """
 
 import subprocess
@@ -36,12 +36,11 @@ def check_valid_ip(my_ip, all_host_ips):
         sys.exit()
     print("\n%s is a matched IP Address!" % my_ip)
 
-   
+  
 def check_active_ip(offset,lock):
     global curr_addr
     global end_addr
     start_thread_time = datetime.datetime.now()
-    
     
     while int(ipaddress.IPv4Address(curr_addr)) <= int(ipaddress.IPv4Address(end_addr)) :
         lock.acquire()
@@ -49,13 +48,16 @@ def check_active_ip(offset,lock):
         curr_addr = ipaddress.ip_address(curr_addr) + 1
         lock.release()
         
+        if int(ipaddress.IPv4Address(chk_ip)) > int(ipaddress.IPv4Address(end_addr)):
+            break
+        
         thread_ip_list[offset].append(str(chk_ip))
         args=['ping', '-n', '1', str(chk_ip)] 
         ping_output = subprocess.Popen(args, shell=True, stdout=subprocess.PIPE)
         ping_output_out = str(ping_output.communicate()[0]) 
         if " TTL" in str(ping_output_out):
             active_ip_list.append(str(chk_ip))
-        
+                
     end_thread_time = datetime.datetime.now()
     exec_time = end_thread_time - start_thread_time
     thread_exec_time[offset].append(str(exec_time))
@@ -96,7 +98,7 @@ def print_report(all_active_ips):
     
     print("\nIP Addresses tested by each thread:")
     for x in thread_ip_list:
-        print("\nThread-%s:"% thread_ip_list.index(x))
+        print("\nThread-%s:"% thread_ip_list.index(x), "Number of IPs tested: " + str(len(x)) )
         print(*x)
        
     print("\n\nExecution time for each thread in HH:MM:SS:MS format:")
